@@ -1,0 +1,198 @@
+////////////////////////final test
+
+
+# PYTHON script
+import os
+import ansa
+from ansa import  *
+def GUITools():
+	data = []
+	#tao window cho giao dien
+	window = guitk.BCWindowCreate("Tao Group - SET tool", guitk.constants.BCOnExitDestroy)
+	#Tao path chon link file
+	bgroup2 =  guitk.BCButtonGroupCreate(window, "Input data", guitk.constants.BCVertical)
+	label1 = guitk.BCLabelCreate(bgroup2,'Nhap link file sanko:')
+	# lay folder
+	link_path = guitk.BCLineEditPathCreate(bgroup2, guitk.constants.BCHistoryFiles,'', guitk.constants.BCHistorySelect, '')
+	# lay link file
+	label2 = guitk.BCLabelCreate(bgroup2,'Nhap link Output:')
+	link_file = guitk.BCLineEditPathCreate(bgroup2, guitk.constants.BCHistoryFolders,'', guitk.constants.BCHistorySelect, '')
+	#tao 2 button ok, cancel
+	dialogbutton = guitk.BCDialogButtonBoxCreate(window)
+	#append thong tin input vao data
+	data = [window,  link_path, link_file]
+	 #ham chay tool hoac cancel tool
+	guitk.BCWindowSetAcceptFunction(window, OKFunc, data)
+	guitk.BCWindowSetRejectFunction(window, CancelFunc, data)
+	# show window
+	guitk.BCShow(window)
+#ham cancel
+def CancelFunc(window, data):
+	return 1
+# ham thuc thi	
+def OKFunc(window, data):
+	link_file = guitk.BCLineEditPathSelectedFilePaths(data[1])
+	output_file = guitk.BCLineEditPathSelectedFilePaths(data[2])
+	utils.Merge(filename=link_file,property_offset='offset',material_offset='offset',set_offset='keep-new',merge_parts=False)
+	nhom = base.CollectEntities(3,None,'ANSAGROUP')
+	for a in nhom:
+		name = base.GetEntityCardValues(3,a,['Name'])
+		if name['Name'] == 'Point_Sanko':
+			fullpart = base.CollectEntities(3,a,'ANSAPART')
+			for part in fullpart :
+				part_ten = base.GetEntityCardValues(3,part,['Name'])
+				base.Or(part)
+				base.Near(0.1)
+				if '_ELEMENT' in part_ten['Name']:
+					new_name=part_ten['Name'][:-len("_ELEMENT")]
+					set_base = base.CreateEntity(3,'GROUP',{'Name':new_name})
+					elem=base.CollectEntities(3,None,'__ELEMENT__',filter_visible=True)
+					base.AddToSet(set_base,elem)
+				elif  '_PRO' in part_ten['Name']:
+					new_name1=part_ten['Name'][:-len("_PRO")]
+					set_base1 = base.CreateEntity(3,'GROUP',{'Name':new_name1})
+					pro=base.CollectEntities(3,None,'__PROPERTIES__',filter_visible=True)
+					base.AddToSet(set_base1, pro)
+				else :
+					new_name2=part_ten['Name'][:-len("_OTHER")]
+					set_base2 = base.CreateEntity(3,'GROUP',{'Name':new_name2})
+					elem1=base.CollectEntities(3,None,'__ELEMENT__',filter_visible=True)
+					base.AddToSet(set_base2, elem1)
+	file_output = output_file+"GROUP.pc"
+	base.OutputPamCrash(filename = file_output,mode='all',disregard_includes = "on",write_comments="none",advanced_options='Sets')
+#if __name__ == '__main__':
+GUITools()
+
+////////////////////////test-1
+# PYTHON script
+import os
+import ansa
+from ansa import*
+def update_pid(pid):
+    pid_str = str(pid)
+    if len(pid_str) == 8:
+        return int(pid_str[1:])
+    elif len(pid_str) == 7:
+        return int('1' + pid_str)
+    return pid
+def main():
+	list_pid = base.CollectEntities(3, None,'PART_SHELL')
+	for pid in list_pid:
+		val_pid = base.GetEntityCardValues(3, pid, ['IDPRT'])['IDPRT']	
+		print(val_pid)
+		new_pid = update_pid(val_pid)
+		base.SetEntityCardValues(3, pid, {'IDPRT': new_pid})
+		base.Compress('')
+	# dat do day va TCONT 0.001
+		base.SetEntityCardValues(3, pid, {'h': 0.001, 'TCONT': 0.001})
+if __name__ == '__main__':
+	main()
+////////////////////////test-2
+
+# PYTHON script
+import os
+import ansa
+import math
+from ansa import*
+def distance(point1, point2):
+    dx = point2['X'] - point1['X']
+    dy = point2['Y'] - point1['Y']
+    dz = point2['Z'] - point1['Z']
+    return math.sqrt(dx**2 + dy**2 + dz**2)
+def main():
+	shell_WARPING=[]
+	shell_ASPECT = []
+	points_warping = []
+	points_aspect = []
+	part1 = base.NewPart("POINT_ASPECT")
+	part = base.NewPart('POINT_WARPING')
+	list_shells = base. CollectEntities(3, None,'SHELL')
+	for shell in list_shells:
+		val_shell = base.GetEntityCardValues(3,shell,['type','N1','N2','N3','N4'])
+		node1 = base.GetEntity(3,'NODE',val_shell['N1'])
+		toado1 = base.GetEntityCardValues(3,node1,['X','Y','Z'])
+		node2 = base.GetEntity(3,'NODE',val_shell['N2'])
+		toado2 = base.GetEntityCardValues(3,node2,['X','Y','Z'])
+		node3 = base.GetEntity(3,'NODE',val_shell['N3'])
+		toado3 = base.GetEntityCardValues(3,node3,['X','Y','Z'])
+		if val_shell['type']=='QUAD':
+			node4 = base.GetEntity(3,'NODE',val_shell['N4'])
+			toado4 = base.GetEntityCardValues(3,node4,['X','Y','Z'])
+			new_curve1 = base.CreateCurve(2, [toado1['X'], toado3['X']], [toado1['Y'], toado3['Y']],  [toado1['Z'], toado3['Z']])
+			new_curve2 = base.CreateCurve(2, [toado2['X'], toado4['X']], [toado2['Y'], toado4['Y']],  [toado2['Z'], toado4['Z']])
+			khoangcach = base.CreateMeasurement([new_curve1, new_curve2], 'DISTANCE')
+			ret_mes = base.GetEntityCardValues(3, khoangcach, ("RESULT", "RES1", "RES2", "RES3"))
+			if ret_mes['RESULT'] >= 0.33:
+				shell_WARPING.append(shell)
+				point = base.Cog(shell)
+				new_point = base.Newpoint(point[0],point[1],point[2])
+				base.SetEntityPart(new_point,part)
+			base.DeleteEntity([new_curve1, new_curve2, khoangcach])
+			list1 = (distance(toado1, toado2),distance(toado2, toado3), distance(toado3, toado4), distance(toado4, toado1))
+			if max(list1)/min(list1) >= 4.99:
+				shell_ASPECT.append(shell)
+				point = base.Cog(shell)
+				new_point = base.Newpoint(point[0],point[1],point[2])
+				base.SetEntityPart(new_point,part1)
+		if val_shell['type']=='TRIA':
+			list2 = (distance(toado1, toado2),distance(toado2, toado3), distance(toado3, toado1))
+			if max(list2)/min(list2) >= 4.99:
+				shell_ASPECT.append(shell)
+				point = base.Cog(shell)
+				new_point = base.Newpoint(point[0],point[1],point[2])
+				base.SetEntityPart(new_point,part1)
+if __name__ == '__main__':
+	main()
+
+////////////////////////test-3
+import ansa
+from ansa import guitk
+from ansa import constants
+ 
+def add_function_name():
+	TopWindow = guitk.BCWindowCreate("Tinh dien tich model", guitk.constants.BCOnExitDestroy)
+	BCGridLayout_1 = guitk.BCGridLayoutCreate(TopWindow, 4, 2)
+	BCLineEdit_4 = guitk.BCLineEditCreate(BCGridLayout_1, " ")
+	guitk.BCGridLayoutAddWidget(BCGridLayout_1, BCLineEdit_4, 3, 1, guitk.constants.BCAlignVCenter + guitk.constants.BCAlignLeft)
+	BCLabel_4 = guitk.BCLabelCreate(BCGridLayout_1, "Tong dien tich")
+	guitk.BCGridLayoutAddWidget(BCGridLayout_1, BCLabel_4, 3, 0, guitk.constants.BCAlignVCenter + guitk.constants.BCAlignLeft)
+	BCLineEdit_3 = guitk.BCLineEditCreate(BCGridLayout_1, " ")
+	guitk.BCGridLayoutAddWidget(BCGridLayout_1, BCLineEdit_3, 2, 1, guitk.constants.BCAlignVCenter + guitk.constants.BCAlignLeft)
+	BCLabel_3 = guitk.BCLabelCreate(BCGridLayout_1, "Tong so elem")
+	guitk.BCGridLayoutAddWidget(BCGridLayout_1, BCLabel_3, 2, 0, guitk.constants.BCAlignVCenter + guitk.constants.BCAlignLeft)
+	BCLineEdit_2 = guitk.BCLineEditCreate(BCGridLayout_1, " ")
+	guitk.BCGridLayoutAddWidget(BCGridLayout_1, BCLineEdit_2, 1, 1, guitk.constants.BCAlignVCenter + guitk.constants.BCAlignLeft)
+	BCLabel_2 = guitk.BCLabelCreate(BCGridLayout_1, "Nhap PID max")
+	guitk.BCGridLayoutAddWidget(BCGridLayout_1, BCLabel_2, 1, 0, guitk.constants.BCAlignVCenter + guitk.constants.BCAlignLeft)
+	BCLineEdit_1 = guitk.BCLineEditCreate(BCGridLayout_1, " ")
+	guitk.BCGridLayoutAddWidget(BCGridLayout_1, BCLineEdit_1, 0, 1, guitk.constants.BCAlignVCenter + guitk.constants.BCAlignLeft)
+	BCLabel_1 = guitk.BCLabelCreate(BCGridLayout_1, "Nhap PID min")
+	guitk.BCGridLayoutAddWidget(BCGridLayout_1, BCLabel_1, 0, 0, guitk.constants.BCAlignVCenter + guitk.constants.BCAlignLeft)
+	data = [BCLineEdit_1, BCLineEdit_2, BCLineEdit_3, BCLineEdit_4]
+	
+	
+	BCGridLayout_2 = guitk.BCGridLayoutCreate(TopWindow, 1, 2)
+
+	BCPushButton_2 = guitk.BCPushButtonCreate(BCGridLayout_2, "Run", MainFunct, data)
+	guitk.BCGridLayoutAddWidget(BCGridLayout_2, BCPushButton_2, 0, 1, guitk.constants.BCAlignVCenter + guitk.constants.BCAlignLeft)
+	guitk.BCShow(TopWindow)
+	return 1
+def MainFunct(TopWindow, data):
+	pid_max = guitk.BCLineEditGetText(data[1])
+	pid_min = guitk.BCLineEditGetText(data[0])
+	list_ok=[]
+	parts = base.CollectEntities(3,None,"__PROPERTIES__")
+	for part in parts:
+		val_part = base.GetEntityCardValues(3,part,['PID'])
+		if val_part['PID'] >= int(pid_min) and val_part['PID'] <= int(pid_max):
+			list_ok.append(part)
+	all_elem =  base. CollectEntities(3,list_ok,"__ELEMENTS__", recursive = True)
+	guitk.BCLineEditSetText(data[2], str(len(all_elem)))
+	all_shell =  base. CollectEntities(3,list_ok,"SHELL", recursive = True)
+	res = base.CreateMeasurement(all_shell, 'AREA')
+	if res:
+		get_result = base.GetEntityCardValues(3, res, ['RESULT'])
+		total_area = get_result['RESULT']
+		guitk.BCLineEditSetText(data[3], str(total_area))
+	base.DeleteEntity(res)
+add_function_name()
