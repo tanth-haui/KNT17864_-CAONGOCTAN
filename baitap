@@ -1,0 +1,512 @@
+///////////////////BAITAP_1
+
+# PYTHON script
+import os
+import ansa
+
+def main():
+	a =15
+	b = 4
+	while a != b:
+		if a > b:
+			a = a - b
+		else:
+			b = b - a
+	print(" Uoc chung lon nhat la: ", a)
+main()
+
+
+///////////////////BAITAP_2
+
+# PYTHON script
+import os
+import ansa
+
+def timSTN(n):
+	if n < 2:
+		return False
+	for i in range(2, n): #cháº¡y tá»« 2 Ä‘áº¿n n-1
+		if n % i ==0:
+			return False
+	return True
+def main():
+	a = 7
+	if timSTN(a):
+		print(a, " la so nguyen to")
+	else:
+		print(a, "khong phai la so nguyen to")
+main()
+
+///////////////////BAITAP_3
+
+
+# PYTHON script
+import os
+import ansa
+
+def main():
+	tong = 0
+	n = 8
+	while n <=0:
+		print("nhap lai so tu nhien n")
+	for i in range(1, n + 1): #cháº¡y tá»« 1 Ä‘áº¿n n (bao gá»“m n)
+		tong = tong + i 
+	print("tong so tu nhien n la: ", tong)
+
+main()
+
+///////////////////BAITAP_4-1
+
+# PYTHON script
+import os
+import ansa
+import math
+
+def find_midpoint(point1,point2):
+	midpoint = ((point2[0] + point1[0])/2, (point2[1] + point1[1])/2, (point2[2] + point1[2])/2)
+	return midpoint
+
+def calculate_distance(point1, point2):
+	vector_ab = (point2[0] - point1[0], point2[1] - point1[1], point2[2] - point1[2])
+	distance = math.sqrt(vector_ab[0]**2 + vector_ab[1]**2+ vector_ab[2]**2)
+	return distance
+
+def main():
+	a = [255.439593 , -896.218967 , 528.757665]
+	b = [272.151161 , -896.970562 , 514.494099] 
+	midpoint = find_midpoint(a,b)
+	print("toa do trung diem la: ", midpoint)
+	distance = calculate_distance(a,b)
+	print("Khoang cach cua 2 node la: ", distance)
+main()
+
+///////////////////BAITAP_4-2
+
+import os
+import ansa
+
+#def second_largest(lst):
+#    if len(lst) < 2:
+#        return None
+#    max1 = int()
+#    max2 = int()
+#    for i in lst:
+#        if i > max1:
+#            max1 = i
+#    for i in lst:
+#        if i > max2 and i < max1:
+#            max2 = i
+#    return max2
+def bubble_sort(arr):
+    n = len(arr)
+    if n > 1:
+        for i in range(n-1):
+            for j in range(n-i-1):
+                if arr[j] > arr[j+1]:
+                    arr[j], arr[j+1]= arr[j+1],arr[j]
+    else:
+        print("Hay nhap lai list")
+def find_sencond_largest(arr):
+	bubble_sort(arr)
+	largest = arr[-1]
+	for i in range(len(arr)-2, -1, -1):
+		if arr[i] < largest:
+			return arr[i]
+	print("Khong co so lon thu 2")
+	return None
+def input_list():
+    user_input = input("Hay nhap day so can sap xep: \n")
+    lst_in = [float(x) for x in user_input.split()] 
+    return lst_in                  
+def main():
+    my_lst = input_list()
+#    if len(my_lst) < 2:
+#        print("Khong co so lon thu  2")
+#    else:
+    second_largest = find_sencond_largest(my_lst)
+    if second_largest != None:
+    	print("So lon thu 2 la: ", second_largest)
+#        result = second_largest(my_lst)
+#        print("giÃ¡ trá»‹ lá»›n thá»© 2 lÃ : ", result)
+#        bubble_sort(my_lst)
+#        second_lst= my_lst[-2]
+#        print("So lon thu 2 la: ", second_lst)
+		
+main()
+
+///////////////////BAITAP_5
+# PYTHON script
+import os
+import ansa
+import math
+
+def calculate_distance(point1, point2):
+	vector_ab = (point2[0] - point1[0], point2[1] - point1[1], point2[2] - point1[2])
+	distance = math.sqrt(vector_ab[0]**2 + vector_ab[1]**2+ vector_ab[2]**2)
+	return distance
+
+def find_min_max_node_distances(dict_points,node_distance = 3.71):
+	if not dict_points:
+		return (),float("inf"), (), 0 , []
+	
+	min_distance = float('inf')
+	max_distance = 0
+	min_pair = ()
+	max_pair = ()
+	find_distance = []
+	#Duyet tat ca cac cap node trong dict
+	keys = list(dict_points.keys()) #Danh sach ID node
+	for i in range(0,len(keys)):
+		for j in range(i+1, len(keys)):
+			id1, id2 = keys[i], keys[j]
+			point1, point2 = dict_points[id1], dict_points[id2]
+			distance = calculate_distance(point1, point2)
+			
+			#tinh khoang cach min_pair
+			if distance < min_distance:
+				min_distance = distance
+				min_pair = (id1, id2)
+			
+			#tinh khoang cach max_pair
+			if distance > max_distance:
+				max_distance = distance
+				max_pair = (id1, id2)
+			#Kiem tra khoang cach node_distance < 3.71
+			if distance < node_distance:
+				find_distance.append((id1, id2))
+
+
+	return min_pair, min_distance, max_pair, max_distance, find_distance
+
+def main():
+	dict_points = {
+        1: [254.54215103604, -900.95425522482, 503.605568516856],
+        2: [262.350737973831, -899.86358702596, 502.606072770772],
+        3: [280.787866324127, -897.84590769253, 496.804646595151],
+        4: [279.941557101746, -896.91364447832, 506.377207918152],
+        5: [281.007741753629, -896.0018091715, 513.038719512284],
+        6: [259.778019816944, -898.37385236514, 516.298333861737],
+        7: [255.439592581815, -896.21896728337, 528.757664958727],
+        8: [265.343377209405, -895.86452222768, 525.691802610791],
+        9: [262.477453910976, -899.48236222448, 505.596845480869],
+        10: [271.546722995453, -898.45854389149, 503.014599542802],
+        11: [272.202432831916, -899.16585356049, 495.996959615178],
+        12: [280.27342767758, -897.195179715, 503.403640388976],
+        13: [272.151160601862, -896.97056221881, 514.494099448083],
+        14: [271.613573047805, -898.10367889992, 506.00469692153],
+        15: [275.002444879412, -895.32621121931, 522.712267862206],
+        16: [283.386985028679, -894.71358835978, 520.42301782236]
+    }
+	min_pair, min_distance, max_pair, max_distance, find_distance = find_min_max_node_distances(dict_points)
+	print(f"Cap co khoang cach min: ({min_distance}):{min_pair}")
+	print(f"Cap co khoang cach max: ({max_distance}):{max_pair}")
+	if find_distance:
+		print("CÃ¡c cáº·p cÃ³ khoáº£ng cÃ¡ch < 3.71:")
+		for i in find_distance:
+			print(i)
+	else:
+		print("KhÃ´ng cÃ³ cáº·p nÃ o cÃ³ khoáº£ng cÃ¡ch < 3.71")
+
+main()
+
+///////////////////BAITAP_6-1
+
+# PYTHON script
+import os
+import ansa
+
+def sum_diagonals(matrix):
+    n = len(matrix)  # KÃ­ch thÆ°á»›c ma tráº­n (n x n)
+    main_diagonal = 0
+    secondary_diagonal = 0
+    
+    for i in range(n):
+        main_diagonal += matrix[i][i]  # Tá»•ng Ä‘Æ°á»ng chÃ©o chÃ­nh
+        secondary_diagonal += matrix[i][n - i - 1]  # Tá»•ng Ä‘Æ°á»ng chÃ©o phá»¥
+    
+    return main_diagonal + secondary_diagonal
+def main():
+    # Ma tráº­n a
+    matrix_a = [
+        [7, 9, 8],
+        [5, 1, 6],
+        [5, 3, 2]
+    ]
+
+    # Ma tráº­n b
+    matrix_b = [
+        [12, 57, 39, 56],
+        [45, 69, 31, 12],
+        [48, 54, 11, 78],
+        [38, 16, 99, 25]
+    ]
+
+    # TÃ­nh tá»•ng cho tá»«ng ma tráº­n
+    print("Tá»•ng cÃ¡c giÃ¡ trá»‹ trÃªn 2 Ä‘Æ°á»ng chÃ©o (ma tráº­n a):", sum_diagonals(matrix_a))
+    print("Tá»•ng cÃ¡c giÃ¡ trá»‹ trÃªn 2 Ä‘Æ°á»ng chÃ©o (ma tráº­n b):", sum_diagonals(matrix_b))
+
+main()
+
+///////////////////BAITAP_6-2
+
+"""1.Cho 1 list, hÃ£y loáº¡i bá» nhá»¯ng pháº§n tá»­ bá»‹ láº·p theo 2 cÃ¡ch:
+	[2,4,5,71,2,3,2,45,71,3,4,6,5,0,â€0â€,1,2,3,6,8,45,71,90,3]
+"""
+# PYTHON script
+import os
+import ansa
+
+def main():
+# Danh sÃ¡ch ban Ä‘áº§u
+    data = [2, 4, 5, 71, 2, 3, 2, 45, 71, 3, 4, 6, 5, 0, "0", 1, 2, 3, 6, 8, 45, 71, 90, 3]
+
+    # Loáº¡i bá» cÃ¡c pháº§n tá»­ bá»‹ láº·p báº±ng set
+    unique_data = list(set(data))
+
+    print("Danh sÃ¡ch sau khi loáº¡i bá» pháº§n tá»­ láº·p (CÃ¡ch 1):", unique_data)
+
+    seen = set() #táº¡o seen lÃ  danh sÃ¡ch rá»—ng
+    unique_data = []
+    for i in data:
+        if i not in seen:
+            unique_data.append(i)  # ThÃªm pháº§n tá»­ má»›i vÃ o danh sÃ¡ch káº¿t quáº£
+            seen.add(i)  
+
+    print("Danh sÃ¡ch sau khi loáº¡i bá» pháº§n tá»­ láº·p (CÃ¡ch 2):", unique_data)
+
+main()
+
+///////////////////Test_1
+
+
+import os
+import ansa
+from ansa import base
+from ansa import constants
+
+def modify_pid(parts):
+    for part in parts:
+        val_pshell = base.GetEntityCardValues(3, part, ['IDPRT', 'h'])
+        id_str = str(val_pshell['IDPRT'])
+        if len(id_str) == 8:
+            new_id = id_str[1:]
+        elif len(id_str) == 7:
+            new_id = '1' + id_str
+        else:
+            new_id = id_str
+        base.SetEntityCardValues(3, part, {"IDPRT": new_id})
+
+def update_thickness_and_tcont(parts):
+    for part in parts:
+        base.SetEntityCardValues(3, part, {"h": 0.001, "TCONT": 0.001})
+
+def main():
+    parts = base.CollectEntities(3, None, 'PART_SHELL')
+    if parts:
+        modify_pid(parts)
+        update_thickness_and_tcont(parts)
+
+main()
+
+///////////////////Test_2
+
+import math
+import ansa
+from ansa import *
+
+def calculate_distance(node1, node2):
+	#	TÃ­nh khoáº£ng cÃ¡ch giá»¯a hai nÃºt
+    return math.sqrt(sum((node1.position[i] - node2.position[i])**2 for i in range(3)))
+
+def check_warping(shell):
+    """
+    Kiá»ƒm tra lá»—i WARPING cá»§a pháº§n tá»­:
+    - Táº¡o 2 Ä‘Æ°á»ng chÃ©o (CURVE) tá»« cÃ¡c nÃºt cá»§a pháº§n tá»­ QUAD.
+    - Äo khoáº£ng cÃ¡ch giá»¯a hai Ä‘Æ°á»ng chÃ©o.
+    - Náº¿u khoáº£ng cÃ¡ch >= 0.33, Ä‘Ã¡nh dáº¥u lÃ  lá»—i.
+    """
+    val_shell = base.GetEntityCardValues(3, shell, ["type", "N1", "N2", "N3", "N4"])
+    if val_shell["type"] == "QUAD":  # Chá»‰ kiá»ƒm tra pháº§n tá»­ QUAD
+        node1 = base.GetEntity(3, 'NODE', val_shell['N1'])
+        node2 = base.GetEntity(3, 'NODE', val_shell['N2'])
+        node3 = base.GetEntity(3, 'NODE', val_shell['N3'])
+        node4 = base.GetEntity(3, 'NODE', val_shell['N4'])
+
+        # Táº¡o 2 Ä‘Æ°á»ng chÃ©o
+        curve1 = base.CreateCurve(2, [node1.position[0], node3.position[0]],
+                                     [node1.position[1], node3.position[1]],
+                                     [node1.position[2], node3.position[2]])
+        curve2 = base.CreateCurve(2, [node2.position[0], node4.position[0]],
+                                     [node2.position[1], node4.position[1]],
+                                     [node2.position[2], node4.position[2]])
+
+        # Äo khoáº£ng cÃ¡ch giá»¯a 2 Ä‘Æ°á»ng chÃ©o
+        measurement = base.CreateMeasurement([curve1, curve2], 'DISTANCE')
+        if measurement:
+            result = base.GetEntityCardValues(3, measurement, ["RESULT"])["RESULT"]
+            base.DeleteEntity([curve1, curve2, measurement])
+            return result >= 0.33
+    return False
+
+def check_aspect(shell):
+    """
+    Kiá»ƒm tra lá»—i ASPECT cá»§a pháº§n tá»­:
+    - TÃ­nh chiá»u dÃ i cá»§a cÃ¡c cáº¡nh.
+    - Náº¿u tá»· lá»‡ giá»¯a chiá»u dÃ i lá»›n nháº¥t vÃ  nhá» nháº¥t >= 4.99, Ä‘Ã¡nh dáº¥u lÃ  lá»—i.
+    """
+    curves = base.CurvesFromEntities(shell, [0.05, 45])  # Láº¥y cÃ¡c cáº¡nh cá»§a pháº§n tá»­
+    curve_entities = base.CollectEntities(3, curves, "CURVE")
+    if curve_entities:
+        lengths = [base.GetEntityCardValues(3, curve, ["Length"])["Length"] for curve in curve_entities]
+        base.DeleteEntity(curves) 
+        if min(lengths) > 0 and max(lengths) / min(lengths) >= 4.99:  # Kiá»ƒm tra tá»· lá»
+            return True
+    return False
+
+def create_point_part(faulty_elements, part_name):
+    """
+    Táº¡o pháº§n (PART) má»›i vÃ  thÃªm cÃ¡c Ä‘iá»ƒm (POINT) vÃ o pháº§n Ä‘Ã³.
+    - Äiá»ƒm Ä‘Æ°á»£c táº¡o táº¡i trá»ng tÃ¢m cá»§a cÃ¡c pháº§n tá»­ bá»‹ lá»—i.
+    """
+    new_part = base.NewPart(part_name)
+    for shell in faulty_elements:
+        centroid = base.Cog(shell)
+        point = base.Newpoint(centroid[0], centroid[1], centroid[2])
+        base.SetEntityPart(point, new_part)
+    print(f"Part '{part_name}' created with {len(faulty_elements)} points.")
+
+def main():
+    """
+    HÃ m chÃ­nh:
+    - Thu tháº­p cÃ¡c pháº§n tá»­ SHELL.
+    - Kiá»ƒm tra lá»—i WARPING vÃ  ASPECT.
+    - Táº¡o cÃ¡c Ä‘iá»ƒm vÃ  gÃ¡n chÃºng vÃ o cÃ¡c pháº§n 'POINT_WARPING', 'POINT_ASPECT'.
+    """
+    shells = base.CollectEntities(3, None, "SHELL")
+    warped_elements = []
+    aspect_elements = []
+
+    for shell in shells:
+        if check_warping(shell):
+            warped_elements.append(shell)
+        if check_aspect(shell):
+            aspect_elements.append(shell)
+
+    create_point_part(warped_elements, "POINT_WARPING")
+    create_point_part(aspect_elements, "POINT_ASPECT")
+
+main()
+
+///////////////////Test_3
+
+# PYTHON script
+import os
+import ansa
+from ansa import guitk
+from ansa import *
+def GUITools():
+	window = guitk.BCWindowCreate('Tinh dien tich model', guitk.constants.BCOnExitDestroy)
+	ButtonGr_1=guitk.BCButtonGroupCreate(window,'',guitk.constants.BCHorizontal)
+	Label_1= guitk.BCLabelCreate(ButtonGr_1,'Nhap PID min:')
+	Input_Label_1=guitk.BCLineEditCreate(ButtonGr_1,'')
+	
+	ButtonGr_2=guitk.BCButtonGroupCreate(window,'',guitk.constants.BCHorizontal)
+	Label_2= guitk.BCLabelCreate(ButtonGr_2,'Nhap PID max:')
+	Input_Label_2=guitk.BCLineEditCreate(ButtonGr_2,'')
+	
+	ButtonGr_3=guitk.BCButtonGroupCreate(window,'',guitk.constants.BCHorizontal)
+	Label_3= guitk.BCLabelCreate(ButtonGr_3,'Tong so elem:')
+	Input_Label_3=guitk.BCLineEditCreate(ButtonGr_3,'')
+	
+	ButtonGr_4=guitk.BCButtonGroupCreate(window,'',guitk.constants.BCHorizontal)
+	Label_4= guitk.BCLabelCreate(ButtonGr_4,'Tong dien tich (mm2):')
+	Input_Label_4=guitk.BCLineEditCreate(ButtonGr_4,'')
+	
+	Data=[Input_Label_1,Input_Label_2,Input_Label_3,Input_Label_4]
+	PushButton=guitk.BCPushButtonCreate(window,'Run',SumElemFunct,Data)
+	guitk.BCShow(window)
+	
+def SumElemFunct(window,Data):
+	PID_Min=guitk.BCLineEditGetText(Data[0])
+	PID_Max=guitk.BCLineEditGetText(Data[1])
+	PIDs=base.CollectEntities(3,None,'__PROPERTIES__')
+	list_PID=[]
+	for PID in PIDs:
+		val_pid=base.GetEntityCardValues(3,PID,['IDPRT'])
+		if val_pid['IDPRT']>=int(PID_Min) and val_pid['IDPRT']<=int(PID_Max):
+			list_PID.append(PID)
+	SUM_Element=base.CollectEntities(3,list_PID,'__ELEMENTS__',recursive=True)
+	guitk.BCLineEditSetText(Data[2], str(len(SUM_Element)))
+	
+	Mesh=base.CreateMeasurement(SUM_Element,'AREA')
+	if Mesh:
+		ret=base.GetEntityCardValues(3,Mesh,['RESULT'])
+		Sum_area=ret['RESULT']
+		guitk.BCLineEditSetText(Data[3], str(Sum_area)) 
+	base.DeleteEntity(Mesh)
+	
+GUITools()
+
+///////////////////final tesst
+# PYTHON script
+import os
+import ansa
+from ansa import *
+	
+def main():
+    Window = guitk.BCWindowCreate('Táº¡o Group-SET Tool', guitk.constants.BCOnExitDestroy)
+    
+    # NÃºt vÃ  nhÃ£n 'Nháº­p link file sanko'
+    ButtonGr_1 = guitk.BCButtonGroupCreate(Window, "", guitk.constants.BCHorizontal)
+    guitk.BCLabelCreate(ButtonGr_1, 'Nháº­p link file Sanko:')
+    Link_Path = guitk.BCLineEditPathCreate(ButtonGr_1, guitk.constants.BCHistoryFiles, '', guitk.constants.BCHistorySelect, '')
+    
+    # NÃºt vÃ  nhÃ£n 'Nháº­p link Output'
+    ButtonGr_2 = guitk.BCButtonGroupCreate(Window, "", guitk.constants.BCHorizontal)
+    guitk.BCLabelCreate(ButtonGr_2, 'Nháº­p link Output:')
+    Link_File = guitk.BCLineEditPathCreate(ButtonGr_2, guitk.constants.BCHistoryFolders, '', guitk.constants.BCHistorySelect, '')
+    
+    Data = [Window, Link_Path, Link_File]
+    guitk.BCDialogButtonBoxCreate(Window)
+    guitk.BCWindowSetAcceptFunction(Window, OKFunction, Data)
+    guitk.BCWindowSetRejectFunction(Window, CancelFunction, Data)
+    guitk.BCShow(Window)
+    
+def CancelFunction(Window, data):
+	return 1
+	
+def OKFunction(Window, data):
+    file_input = guitk.BCLineEditPathSelectedFilePaths(data[1])
+    utils.Merge(file_input)
+    base.DeleteEntity(base.CollectEntities(3, None, 'INCLUDE'))
+    base.DeleteEntity(base.CollectEntities(3, None, 'GROUP'), True)
+    output = guitk.BCLineEditPathSelectedFilePaths(data[2])
+    group_ansagroup = base.CollectEntities(3, None, 'ANSAGROUP')
+    ansa_group_working = [ansagroup for ansagroup in group_ansagroup if ansagroup._name == 'Point_Sanko']
+    grouppart_working = base.CollectEntities(3, ansa_group_working, 'ANSAPART', recursive=True)
+    for ansapart in grouppart_working:
+        name_set = {'Name': ansapart._name}
+        set_group = base.CreateEntity(3, 'GROUP', name_set)
+        base.Or(ansapart)
+        base.Near(radius=0.1)
+        if '_ELEMENT' in ansapart._name:
+            group_ele = base.CollectEntities(3, None, '__ELEMENTS__', filter_visible=True)
+            if set_group:
+                base.AddToSet(set_group, group_ele)
+        elif '_PRO' in ansapart._name:
+            group_pro = base.CollectEntities(3, None, 'PART_SHELL', filter_visible=True)
+            if set_group:
+                base.AddToSet(set_group, group_pro)
+    file_output = output + 'Group.pc'
+    base.OutputPamCrash(file_output, mode='all', write_comments="none", advanced_options='Sets')
+    return 1
+
+main()
+
+
+
+
+
+
+
+
